@@ -8,6 +8,7 @@ import nak.cluster.ClusterReport
 import nak.cluster.Kmeans
 import nak.cluster.DistanceFunction
 import nak.cluster.PointTransformer
+import nak.cluster.ZscoreTransformer
 
 import appliednlp.cluster._
 
@@ -17,7 +18,8 @@ import appliednlp.cluster._
  */
 object Cluster {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]) 
+  {
     // Parse and get the command-line options
     val opts = ClusterOpts(args)
     
@@ -28,10 +30,56 @@ object Cluster {
     
     // Your code starts here. You'll use and extend it during every problem.
 
+    val fileName = opts.filename();    
+    val dataInput = dataCreator(fileName,opts.features())
+   val points = scaleDimensions(opts.transform(),dataInput);
+
+    val kmeansObject = new Kmeans(points, DistanceFunction(opts.distance()),fixedSeedForRandom=true);
+    val centroids = kmeansObject.run(opts.k())._2;
+    val goldClusterIds = dataInput.map(x=> x._2).toIndexedSeq;
+    val predictedClusterIndices = kmeansObject.computeClusterMemberships(centroids)._2;
+    
+    val ids = dataInput.map(x=>x._1);
+    val labels = dataInput.map(x=> x._2)
+
+
+    println(predictedClusterIndices);
+    println(ClusterConfusionMatrix(goldClusterIds,centroids.length,predictedClusterIndices));
+    
+    if(opts.report() ==  true)
+    ClusterReport(ids,labels,predictedClusterIndices);
+
+    if(opts.showCentroids() == true)
+        println(centroids);
+
 
   }
 
+  def dataCreator(fileName:String,feature:String)={
+
+    feature match {
+        case "standard" => DirectCreator(fileName).toList
+        case "schools" => SchoolsCreator(fileName).toList
+        case "countries"=> CountriesCreator(fileName).toList
+       case "fed-simple"=> val obj = new FederalistCreator(true) ; obj(fileName).toList
+        case "fed-full"=> val obj = new FederalistCreator(false) ; obj(fileName).toList
+    }
+
+  }
+  def scaleDimensions(option:String,dataInput:List[(String,String,Point)]):IndexedSeq[Point]=
+  {
+
+    val points= dataInput.map(x=> x._3).toIndexedSeq;    
+    option match {
+        case "z"|"zscore" => ZscoreTransformer(points).apply(points)
+        case "ident"|"i" => points
+        case "pca"|"p" =>PointTransformer("p",points).apply(points)
+    }
+    
+  }
+
 }
+
 
 
 /**
