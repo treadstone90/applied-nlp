@@ -206,58 +206,15 @@ class FederalistCreator(simple: Boolean = false) extends PointCreator {
          yield new Point( IndexedSeq(
                   articlefeatureMaps(i)("avesentlength"),
                   //articlefeatureMaps(i)("capRatio"),
-                  //articlefeatureMaps(i)("avePunct"),
+                  articlefeatureMaps(i)("avePunct"),
                  //articlefeatureMaps(i)("numsent"),
                   //articlefeatureMaps(i)("vrichness"),
                   articlefeatureMaps(i)("fRatio"),
                  
                  articlefeatureMaps(i)("tfidf")
                   ).flatten)
-         println("points yielded");
       
          points.toIndexedSeq
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-  
-      
-
-      
-
-      
-
-    //  val numberOfSentences = texts.map(x=> sdetector.sentDetect(x).length.toDouble) // no cap required here
-     // val capitalWordsRatio=(articles.map(x=> x.count(x=> x.matches("[A-Z]+") && x.length>1)/(x.length*1.0))) // only this requires
-                                                                                                              // the use of capitals
-
-      
-      //val averageSentLength = texts.map(x=> (1.0*SimpleTokenizer(x).length/sdetector.sentDetect(x).length))
-    
-    
-      
-
-      //val FWordRatio = articles.map(x=> termFrequency(potentialFWords,x))
-
-      
-
-      //val vocabRichness = textSets.map(x=> x.size.toDouble);
-
-/*
-      val points = for(i<- 0 to texts.length-1) yield 
-        new Point((IndexedSeq(IndexedSeq(numberOfSentences(i)), IndexedSeq(averageSentLength(i)), IndexedSeq(vocabRichness(i)),
-          FWordRatio(i),IndexedSeq(capitalWordsRatio(i)))).flatten)*/
 
       //Vector[Point]()
    

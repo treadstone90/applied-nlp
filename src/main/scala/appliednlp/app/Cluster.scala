@@ -42,8 +42,6 @@ object Cluster {
     val ids = dataInput.map(x=>x._1);
     val labels = dataInput.map(x=> x._2)
 
-
-    println(predictedClusterIndices);
     println(ClusterConfusionMatrix(goldClusterIds,centroids.length,predictedClusterIndices));
     
     if(opts.report() ==  true)
